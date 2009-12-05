@@ -44,7 +44,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if !defined(AMIGA) && !defined(__mac_os)
+#include <stdint.h>
+#ifdef HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 #include "megahal.h"
@@ -65,14 +66,14 @@
 
 #define kStartSigniture		0xABCD
 #define kEndSigniture		0xDEADBEEF
-#define kExtraBytes			(sizeof(BYTE2) + sizeof(BYTE4) + sizeof(size_t))
+#define kExtraBytes			(sizeof(uint16_t) + sizeof(uint32_t) + sizeof(size_t))
 
 /*===========================================================================*/
 
 void *my_malloc(size_t, char *, int);
 void *my_realloc(void *ptr, size_t, char *, int);
 void my_free(void *, char *, int);
-bool isValidPointer(void *, char *, int);
+int isValidPointer(void *, char *, int);
 unsigned long MemoryCount(void);
 
 /*===========================================================================*/
@@ -98,14 +99,14 @@ void*  my_malloc(size_t size, char* file, int line)
 	newptr = malloc(size + kExtraBytes);
 	if (newptr) {
 									// start signiture
-		*((BYTE2*)newptr) = kStartSigniture; 
-		newptr += sizeof(BYTE2);
+		*((uint16_t*)newptr) = kStartSigniture; 
+		newptr += sizeof(uint16_t);
 									// store length of ptr
 		memcpy(newptr, &size, sizeof(size_t));
 		newptr += sizeof(size_t);
 		memset(newptr, 0xFF, size);	// make sure not 0
 									// end signiture
-		*((BYTE4*)&newptr[size]) = kEndSigniture; 
+		*((uint32_t*)&newptr[size]) = kEndSigniture; 
 	}
 	return newptr;
 }
@@ -130,17 +131,17 @@ void*  my_realloc(void* ptr, size_t size, char* file, int line)
 		exit(1);
 	}
 
-	newptr = ((char*)ptr) - sizeof(BYTE2) - sizeof(size_t);
+	newptr = ((char*)ptr) - sizeof(uint16_t) - sizeof(size_t);
 	newptr = realloc(newptr, size + kExtraBytes);
 	if (newptr) {
 									// start signiture
-		*((BYTE2*)newptr) = kStartSigniture; 
-		newptr += sizeof(BYTE2);
+		*((uint16_t*)newptr) = kStartSigniture; 
+		newptr += sizeof(uint16_t);
 									// store length of ptr
 		memcpy(newptr, &size, sizeof(size_t));
 		newptr += sizeof(size_t);
 									// end signiture
-		*((BYTE4*)&newptr[size]) = kEndSigniture; 
+		*((uint32_t*)&newptr[size]) = kEndSigniture; 
 	}
 	return newptr;
 }
@@ -163,8 +164,8 @@ void my_free(void* ptr, char*file, int line)
 				file, line, mallocscalled, freescalled, reallocscalled);
 		exit(1);
 	}
-	newptr = ((char*)ptr) - sizeof(BYTE2) - sizeof(size_t);	// real start
-	ptrsize = *((size_t*)&newptr[sizeof(BYTE2)]);			// size of pointer
+	newptr = ((char*)ptr) - sizeof(uint16_t) - sizeof(size_t);	// real start
+	ptrsize = *((size_t*)&newptr[sizeof(uint16_t)]);			// size of pointer
 	memset(ptr, 0xFF, ptrsize);		// make sure mem is changed
 	free(newptr);
 	return;
@@ -176,26 +177,26 @@ void my_free(void* ptr, char*file, int line)
  *              Function:       isValidPointer
  *              Purpose:          check to see is a pointer is valid.
  */
-bool isValidPointer(void* ptr, char* file, int line)
+int isValidPointer(void* ptr, char* file, int line)
 {
 	char* newptr;
 	size_t ptrsize;
 	
-	newptr = ((char*)ptr) - sizeof(BYTE2) - sizeof(size_t);	// real start
-	ptrsize = *((size_t*)&newptr[sizeof(BYTE2)]);			// size of pointer
+	newptr = ((char*)ptr) - sizeof(uint16_t) - sizeof(size_t);	// real start
+	ptrsize = *((size_t*)&newptr[sizeof(uint16_t)]);			// size of pointer
 
-	if (*((BYTE2*)newptr) != kStartSigniture) {
+	if (*((uint16_t*)newptr) != kStartSigniture) {
 		printf("\nisValidPointer MEM overwrite: FILE %s LINE %d\n[mallocs %ld] [frees %ld] [reallocs %ld]\n",
 				file, line, mallocscalled, freescalled, reallocscalled);
-		return FALSE;
+		return 0;
 	}
-	newptr += sizeof(BYTE2) + sizeof(size_t) + ptrsize;
-	if ((*(BYTE4*)newptr) != kEndSigniture) {
+	newptr += sizeof(uint16_t) + sizeof(size_t) + ptrsize;
+	if ((*(uint32_t*)newptr) != kEndSigniture) {
 		printf("\nisValidPointer MEM overwrite: FILE %s LINE %d\n[mallocs %ld] [frees %ld] [reallocs %ld]\n",
 				file, line, mallocscalled, freescalled, reallocscalled);
-		return FALSE;
+		return 0;
 	}
-	return TRUE;
+	return 1;
 }
 
 /*---------------------------------------------------------------------------*/

@@ -48,7 +48,7 @@
 extern void *my_malloc(size_t, char *, int);
 extern void *my_realloc(void *ptr, size_t, char *, int);
 extern void my_free(void *, char *, int);
-extern bool isValidPointer(void *, char *, int);
+extern int isValidPointer(void *, char *, int);
 extern unsigned long MemoryCount(void);
 
 /*===========================================================================*/
