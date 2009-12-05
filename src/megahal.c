@@ -103,7 +103,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <getopt.h>
-#if !defined(AMIGA) && !defined(__mac_os)
+#ifdef HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 #include <string.h>

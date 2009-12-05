@@ -1,9 +1,13 @@
+#ifdef HAVE_CONFIG_H
+#include "../config.h"
+#endif 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <getopt.h>
-#if !defined(AMIGA) && !defined(__mac_os)
+#ifdef HAVE_MALLOC_H
 #include <malloc.h>
 #endif
 #include <string.h>
