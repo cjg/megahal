@@ -1,10 +1,8 @@
-.TH MEGAHAL 1 
+.TH MEGAHAL 8 "" "megahal #VERSION#" "" 
 .SH NAME
-megahal, megahal-personal \- chat with megahal
+megahal \- chat with megahal
 .SH SYNOPSIS
 .B megahal
-.br
-.B megahal-personal
 .SH "DESCRIPTION"
 .BR megahal
 is a conversation simulator. It differs from conversation simulators
@@ -27,8 +25,6 @@ another program.
 Supress the startup banner. This is a debian-specific
 modification, and is useful mainly if you want to interface megahal to
 another program.
-.SH "SEE ALSO"
-/usr/share/doc/megahal/README.TXT.gz
 .SH AUTHOR
 This manual page was written by Joey Hess,
 for the Debian GNU/Linux system.

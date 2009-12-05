@@ -1,1 +1,1 @@
-SUBDIRS=src data @PYSUBDIR@
+SUBDIRS=src data doc @PYSUBDIR@
