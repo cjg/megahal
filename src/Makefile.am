@@ -2,12 +2,17 @@ if DEBUG
 DEBUG_FLAG = -DDEBUG 
 endif
 
-bin_PROGRAMS = megahal
-megahal_SOURCES =\
+noinst_LTLIBRARIES = libmegahal.la
+libmegahal_la_SOURCES =\
 	debug.c\
 	debug.h\
-	main.c\
 	megahal.c\
-	megahal.h
+	megahal.h 
+
+bin_PROGRAMS = megahal
+megahal_SOURCES =\
+	main.c
+megahal_LDADD = libmegahal.la
+megahal_DEPENDENCIES = libmegahal.la
 	
-megahal_CFLAGS = $(DEBUG_FLAG)
+AM_CFLAGS = $(DEBUG_FLAG)
