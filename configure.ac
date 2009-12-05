@@ -52,5 +52,6 @@ AC_CHECK_FUNCS([floor memset mkdir sqrt strchr strdup])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
+		 data/Makefile
                  python/Makefile])
 AC_OUTPUT
