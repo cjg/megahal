@@ -19,9 +19,14 @@ AC_ARG_ENABLE(debug,
         [debug=false])
 AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
 
+AM_PATH_PYTHON
+AM_CHECK_PYTHON_HEADERS([PYSUBDIR=python],[])
+AC_SUBST(PYSUBDIR)
+ 
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_LIBTOOL
 
 # Checks for libraries.
 
@@ -46,5 +51,6 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([floor memset mkdir sqrt strchr strdup])
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+                 src/Makefile
+                 python/Makefile])
 AC_OUTPUT
